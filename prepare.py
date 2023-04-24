@@ -25,3 +25,44 @@ def prepare_items():
     df['sales_total'] = df['sale_amount'] * df['item_price']
     
     return df
+
+def prepare_opsd():
+    '''
+    Actions: gets data, creates new columns, and drops null values
+    '''
+    
+    # set file name
+    filename = 'opsd_germany_daily.csv'
+
+    # if the file exists
+    if os.path.exists(filename):
+        
+        # read the csv 
+        df = pd.read_csv(filename, index_col=0)
+        
+    
+    # otherwise
+    else:
+        
+        # get data
+        df = pd.read_csv('https://raw.githubusercontent.com/jenfly/opsd/master/opsd_germany_daily.csv')
+
+    # creating python friendly names
+    df.columns = df.columns.str.lower().str.replace('+', '_')
+
+    # converting dates to datetime
+    df.date = pd.to_datetime(df.date)
+
+    # setting index
+    df = df.set_index('date')
+
+    # setting month
+    df['month'] = df.index.month_name()
+
+    # setting day
+    df['day'] = df.index.day_name()
+    
+    # drop nulls
+    df.dropna(inplace=True)
+    
+    return df
